@@ -15,9 +15,11 @@ The system implements a controlled interaction flow between:
 
 ## Response Formats
 
-The system uses two main XML-style formats for communication:
+The system currently uses XML-style formats for communication. We will be changing this to JSON format.
 
-### 1. Response Format
+### Current XML Formats
+
+#### 1. Response Format
 ```xml
 <RESPOND>content goes here</RESPOND>
 ```
@@ -25,13 +27,60 @@ The system uses two main XML-style formats for communication:
 - The Python script extracts and shows the content between the tags
 - Can contain any text, including explanations, answers, or results
 
-### 2. Prompt Format
+#### 2. Prompt Format
 ```xml
 <PROMPT>prompt content goes here</PROMPT>
 ```
 - Used when the LLM needs to process the next step
 - Helps maintain the chain of thought
 - Contains internal prompting for the LLM's next action
+
+### Proposed JSON Formats
+
+The system will use JSON format for communication. The following formats will be used:
+
+#### 1. Response Format
+```json
+{
+  "type": "respond",
+  "content": "content goes here"
+}
+```
+- Used when the LLM wants to display information to the user
+- The Python script extracts and shows the content from the "content" field
+- Can contain any text, including explanations, answers, or results
+
+#### 2. Prompt Format
+```json
+{
+  "type": "prompt",
+  "content": "prompt content goes here"
+}
+```
+- Used when the LLM needs to process the next step
+- Helps maintain the chain of thought
+- Contains internal prompting for the LLM's next action
+
+#### 3. Search Format
+```json
+{
+  "type": "search",
+  "query": "search query goes here"
+}
+```
+- Used when the LLM needs to perform an online search
+- The Python script extracts the search query from the "query" field
+
+### Implementation Notes
+
+To implement this change, the following modifications are needed:
+
+1.  **Update LLM Prompts**: Modify the prompts to generate JSON format instead of XML format.
+2.  **Update Python Parsing**: Update the `extract_tag_content` function in `main.py` to parse JSON instead of XML. This will involve using the `json` library to parse the JSON strings and extract the content based on the "type" field.
+3.  **Update Logic**: Update the logic in `main.py` to handle the new JSON format, including extracting the content from the correct fields and handling different types of responses.
+4.  **Remove XML Parsing**: Remove the XML parsing logic from `main.py`.
+5.  **Add JSON Parsing**: Add the JSON parsing logic to `main.py`.
+6.  **Test**: Test the changes to ensure that the system works correctly with the new JSON format.
 
 ## Chain of Thought Process
 
